@@ -80,8 +80,6 @@
 			<version>0.32.0</version>
 		</dependency>
 
-
-
 		<dependency>
 			<groupId>dev.langchain4j</groupId>
 			<artifactId>langchain4j-qdrant</artifactId>
@@ -92,6 +90,12 @@
 			<groupId>io.qdrant</groupId>
 			<artifactId>client</artifactId>
 			<version>1.7.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
+			<version>0.32.0</version>
 		</dependency>
 <!--test dependencies-->
 		<dependency>
@@ -106,6 +110,14 @@
 			<version>5.9.3</version> <!-- or the latest version -->
 			<scope>test</scope>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 
 
 
