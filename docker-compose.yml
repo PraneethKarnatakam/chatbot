@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  qdrant:
+    image: qdrant/qdrant  # Specify the version of Qdrant you want to use
+    container_name: qdrant
+    ports:
+      - "6333:6333"  # Expose HTTP port
+      - "6334:6334"  # Expose gRPC port
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+volumes:
+  qdrant_data:
+    driver: local
