@@ -4,6 +4,7 @@ import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.AllMiniLmL6V2EmbeddingModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.store.embedding.EmbeddingMatch;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.qdrant.QdrantEmbeddingStore;
 import io.qdrant.client.QdrantClient;
@@ -12,8 +13,12 @@ import io.qdrant.client.grpc.Collections;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.qdrant.QdrantContainer;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import static dev.langchain4j.internal.Utils.randomUUID;
 
@@ -53,21 +58,38 @@ public class QdrantIntegrationTest {
     @Test
     void testQdrantCapabilities() {
 
-        TextSegment segment1 = TextSegment.from("I've been to France twice.");
-        Embedding embedding1 = embeddingModel.embed(segment1).content();
-        embeddingStore.add(embedding1, segment1);
+        addTextSegmentToStore("I've been to France twice.");
+        addTextSegmentToStore("The weather is so cool");
+        addTextSegmentToStore("Zoom car is a self-driving car rental marketplace");
+        addTextSegmentToStore("Ooty is monsoon's are good");
 
+        assertEmbedding("Did you ever travel abroad?", "I've been to France twice.");
+        assertEmbedding("How's is Temperature?", "The weather is so cool");
+        assertEmbedding("Looking for car rental?", "Zoom car is a self-driving car rental marketplace");
+        assertEmbedding("How is Ooty whether ?", "Ooty is monsoon's are good",2);
+        assertEmbedding("How is Ooty whether ?", "The weather is so cool",2);
+    }
 
+    private void assertEmbedding(String query, String expected, int relavence) {
+        Embedding queryEmbedding = embeddingModel.embed(query).content();
+        List<EmbeddingMatch<TextSegment>> relevant = embeddingStore.findRelevant(queryEmbedding, relavence);
+        List<String> relavantDocuments = relevant.stream().map(ele -> ele.embedded().text()).collect(Collectors.toList());
+        assertTrue(relavantDocuments.stream().anyMatch(doc -> doc.equals(expected)));
+    }
 
+    private void assertEmbedding(String query, String expected) {
+        Embedding queryEmbedding = embeddingModel.embed(query).content();
+        List<EmbeddingMatch<TextSegment>> relevant = embeddingStore.findRelevant(queryEmbedding, 1);
+        EmbeddingMatch<TextSegment> embeddingMatch = relevant.get(0);
+        assertEquals(expected, embeddingMatch.embedded().text());
     }
 
 
-
-
-
-
-    @Test
-    public void
+    private void addTextSegmentToStore(String text) {
+        TextSegment segment = TextSegment.from(text);
+        Embedding embedding = embeddingModel.embed(segment).content();
+        embeddingStore.add(embedding, segment);
+    }
 
 
 }
