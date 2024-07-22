@@ -10,8 +10,11 @@ import dev.langchain4j.store.embedding.qdrant.QdrantEmbeddingStore;
 import io.qdrant.client.QdrantClient;
 import io.qdrant.client.QdrantGrpcClient;
 import io.qdrant.client.grpc.Collections;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.qdrant.QdrantContainer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,6 +24,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static dev.langchain4j.internal.Utils.randomUUID;
+
+
+
 
 public class QdrantIntegrationTest {
 
@@ -91,5 +97,9 @@ public class QdrantIntegrationTest {
         embeddingStore.add(embedding, segment);
     }
 
+    @AfterAll
+    public static void tearDownContainer() {
+        qdrantContainer.stop();
+    }
 
 }

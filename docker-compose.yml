@@ -9,7 +9,19 @@ services:
       - "6334:6334"  # Expose gRPC port
     volumes:
       - qdrant_data:/qdrant/storage
-
+  postgres:
+    image: timescale/timescaledb:2.14.2-pg16
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: chatbot
+    ports:
+      - "5432:5432"  # Expose PostgreSQL port
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 volumes:
   qdrant_data:
+    driver: local
+  postgres_data:
     driver: local
