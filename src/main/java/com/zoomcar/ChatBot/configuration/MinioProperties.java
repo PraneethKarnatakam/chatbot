@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Data
 @NoArgsConstructor
 public class MinioProperties {
-    private String minioUrl;
+    private String url;
     private String accessKey;
     private String secretKey;
     private String bucketName;
